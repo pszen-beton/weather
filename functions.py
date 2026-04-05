@@ -4,12 +4,14 @@ import requests
 
 def parse_yr_response(body):
     properties = body['properties']
-    timeseries = properties["timeseries"]
+    timeseries = properties['timeseries']
 
-    times = [datetime.fromisoformat(t['time']).replace(tzinfo=None) for t in timeseries]
-    temperatures = [t['data']['instant']['details']['air_temperature'] for t in timeseries]
+    yr_response_parameters = timeseries[0]['data']['instant']['details'].keys()
+    temperature_predictions = {'time':[t['time'] for t in timeseries]}
 
-    temperature_predictions = {"time": times, "temperature": temperatures}
+    for param in yr_response_parameters:
+        temperature_predictions[param] = [t['data']['instant']['details'].get(param) for t in timeseries]
+
 
     return temperature_predictions
 
